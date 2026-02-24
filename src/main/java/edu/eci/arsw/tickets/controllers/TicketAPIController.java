@@ -1,6 +1,5 @@
 package edu.eci.arsw.tickets.controllers;
 
-import edu.eci.arsw.tickets.model.NOTUSING.Point;
 import edu.eci.arsw.tickets.model.Ticket;
 import edu.eci.arsw.tickets.persistence.TicketNotFoundException;
 import edu.eci.arsw.tickets.persistence.TicketPersistenceException;
@@ -45,6 +44,7 @@ public class TicketAPIController {
     @GetMapping
     public ResponseEntity<ApiResponse<Set<?>>> getAll() {
         Set<Ticket> tickets = services.getAllTickets();
+        socketIOClient.sendDrawEvent();
         return ResponseEntity.ok(
                 new ApiResponse<>(200, "execute ok", tickets)
         );
@@ -68,6 +68,7 @@ public class TicketAPIController {
     public ResponseEntity<ApiResponse<?>> byId(@PathVariable long id) {
         try {
             Ticket ticket = services.getTicketById(id);
+            socketIOClient.sendDrawEvent();
             return ResponseEntity.ok(
                     new ApiResponse<>(200, "execute ok", ticket)
             );
@@ -77,7 +78,7 @@ public class TicketAPIController {
             );
         }
     }
-    // GET /api/v1/tickets/{author}/{bpname}
+    // GET /api/v1/tickets/called
     @Operation(
             summary = "Obtener el ticket con estado CALLED",
             description = "Retorna un ticket con el estado de CALLED"
@@ -92,10 +93,11 @@ public class TicketAPIController {
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "500", description = "Error interno del servidor",
                     content = @Content)
     })
-    @GetMapping("/{author}/{bpname}")
+    @GetMapping("/called")
     public ResponseEntity<ApiResponse<?>> calledTicket() {
         try {
-             Ticket ticket = services.getCalledTicket();
+            Ticket ticket = services.getCalledTicket();
+            socketIOClient.sendDrawEvent();
             return ResponseEntity.ok(
                     new ApiResponse<>(200, "execute ok", ticket)
             );
@@ -156,11 +158,10 @@ public class TicketAPIController {
     public ResponseEntity<ApiResponse<?>> call() {
         try {
             services.callNextTicket();
-
             socketIOClient.sendDrawEvent();
 
             return ResponseEntity.status(HttpStatus.ACCEPTED).body(
-                    new ApiResponse<>(202, "Point added successfully", null)
+                    new ApiResponse<>(202, "called successfully", null)
             );
         } catch (TicketNotFoundException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(

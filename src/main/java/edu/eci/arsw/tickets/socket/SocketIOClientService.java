@@ -31,7 +31,7 @@ public class SocketIOClientService {
                 }
             });
 
-            socket.on("blueprint-update", new Emitter.Listener() {
+            socket.on("ticket-update", new Emitter.Listener() {
                 @Override
                 public void call(Object... args) {
                     System.out.println("Received blueprint update: " + args[0]);

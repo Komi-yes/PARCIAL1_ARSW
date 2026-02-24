@@ -59,7 +59,7 @@ export default function App() {
 
     useEffect(() => {
         const base = tech === 'stomp' ? API_BASE : IO_BASE
-        fetch(`${base}/api/v1/blueprints/${author}/${name}`)
+        fetch(`${base}/api/v1/tickets`)
             .then(r => r.json())
             .then(response => {
                 const pts = response?.data?.points ?? []
@@ -112,13 +112,13 @@ export default function App() {
             const s = createSocket(IO_BASE)
             socketRef.current = s
 
-            const room = `blueprints.${author}.${name}`
+            const room = `HOSPITAL`
 
             s.on('connect', () => {
                 s.emit('join-room', room)
             })
 
-            s.on('blueprint-update', (upd) => {
+            s.on('ticket-update', (upd) => {
                 appendPoints(upd?.points ?? [])
             })
 
@@ -155,8 +155,8 @@ export default function App() {
                 body: JSON.stringify({ author, name, point }),
             })
         } else if (tech === 'socketio' && socketRef.current?.connected) {
-            const room = `blueprints.${author}.${name}`
-            socketRef.current.emit('draw-event', { room, author, name, point })
+            const room = `HOSPITAL`
+            socketRef.current.emit('draw-event', { room})
         }
     }
 

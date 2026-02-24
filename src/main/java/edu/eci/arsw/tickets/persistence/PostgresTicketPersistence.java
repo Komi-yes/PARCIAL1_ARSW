@@ -23,16 +23,18 @@ public class PostgresTicketPersistence implements TicketPersistence {
 
     @Override
     public void saveTicket(Ticket ticket) throws TicketPersistenceException {
-        if (repo.findById(ticket.getId()).isPresent()) {
-            throw new TicketPersistenceException("Blueprint already exists: "
-                    + ticket.getId());
+
+        ticket = repo.save(ticket);
+
+        if (ticket.getId() == 1){
+            ticket.setState(CALLED);
+            repo.save(ticket);
         }
-        repo.save(ticket);
     }
 
     @Override
     public Ticket getCalledTicket() throws TicketNotFoundException {
-        return repo.findCalledTicket(CALLED)
+        return repo.findTicketByState(CALLED)
                 .orElseThrow(() -> new TicketNotFoundException(
                         "Ticket not found: %s".formatted(CALLED)));
     }

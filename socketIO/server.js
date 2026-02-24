@@ -10,8 +10,6 @@ const app = express();
 app.use(cors({ origin: '*' }));
 app.use(express.json());
 
-// ---------- PROXY REST -> SPRING ----------
-
 async function proxyToSpring(req, res, path) {
     try {
         const url = `${SPRING_BASE}${path}`;
@@ -37,24 +35,24 @@ async function proxyToSpring(req, res, path) {
     }
 }
 
-app.get('/api/v1/blueprints', (req, res) =>
-    proxyToSpring(req, res, '/api/v1/blueprints')
+app.get('/api/v1/tickets', (req, res) =>
+    proxyToSpring(req, res, '/api/v1/tickets')
 );
 
-app.get('/api/v1/blueprints/:author', (req, res) =>
-    proxyToSpring(req, res, `/api/v1/blueprints/${req.params.author}`)
+app.get('/api/v1/tickets/:id', (req, res) =>
+    proxyToSpring(req, res, `/api/v1/tickets/${req.params.id}`)
 );
 
-app.get('/api/v1/blueprints/:author/:bpname', (req, res) =>
-    proxyToSpring(req, res, `/api/v1/blueprints/${req.params.author}/${req.params.bpname}`)
+app.get('/api/v1/tickets/called', (req, res) =>
+    proxyToSpring(req, res, '/api/v1/tickets/called')
 );
 
-app.post('/api/v1/blueprints', (req, res) =>
-    proxyToSpring(req, res, '/api/v1/blueprints')
+app.post('/api/v1/tickets/create', (req, res) =>
+    proxyToSpring(req, res, '/api/v1/tickets/create')
 );
 
-app.put('/api/v1/blueprints/:author/:bpname/points', (req, res) =>
-    proxyToSpring(req, res, `/api/v1/blueprints/${req.params.author}/${req.params.bpname}/points`)
+app.put('/api/v1/tickets/call', (req, res) =>
+    proxyToSpring(req, res, `/api/v1/tickets/call`)
 );
 
 const server = http.createServer(app);
@@ -71,70 +69,21 @@ io.on('connection', (socket) => {
 
     socket.on('draw-event', async (payload) => {
         console.log('draw-event', payload)
-        const { room, point, author, name, fromSpring } = payload
-
-        if (fromSpring) {
-            io.to(room).emit('blueprint-update', { author, name, points: [point] })
-            return
-        }
+        const { room } = payload
 
         try {
-            const url = `${SPRING_BASE}/api/v1/blueprints/${author}/${name}/points`
+            const url = `${SPRING_BASE}/api/v1/tickets/create`
             const r = await fetch(url, {
-                method: 'PUT',
+                method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(point),
             })
-
 
             if (!r.ok) {
                 const errTxt = await r.text()
                 console.warn('Spring rejected draw-event:', r.status, errTxt)
-
-                if (r.status === 404) {
-                    try {
-                        const createUrl = `${SPRING_BASE}/api/v1/blueprints`
-                        const createPayload = { author, name, points: [point] }
-
-                        const cr = await fetch(createUrl, {
-                            method: 'POST',
-                            headers: { 'Content-Type': 'application/json' },
-                            body: JSON.stringify(createPayload),
-                        })
-
-                        if (cr.ok) {
-                            const roomSafe = room ?? `blueprints.${author}.${name}`
-                            io.to(roomSafe).emit('blueprint-update', { author, name, points: [point] })
-                            console.log(`Blueprint creado automáticamente: ${author}/${name}`)
-                            return
-                        }
-
-                        if (cr.status === 403) {
-                            const retry = await fetch(url, {
-                                method: 'PUT',
-                                headers: { 'Content-Type': 'application/json' },
-                                body: JSON.stringify(point),
-                            })
-
-                            if (retry.ok) return
-
-                            const retryErr = await retry.text()
-                            socket.emit('draw-error', { status: retry.status, body: retryErr })
-                            return
-                        }
-
-                        const createErr = await cr.text()
-                        socket.emit('draw-error', { status: cr.status, body: createErr })
-                        return
-
-                    } catch (e) {
-                        console.error('Error creating blueprint on 404:', e)
-                        socket.emit('draw-error', { status: 502, body: 'Cannot create blueprint (Node -> Spring)' })
-                        return
-                    }
-                }
-
                 socket.emit('draw-error', { status: r.status, body: errTxt })
+            } else {
+                io.to(room).emit('ticket-update', { message: 'New ticket created' })
             }
 
         } catch (e) {

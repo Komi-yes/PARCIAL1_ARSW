@@ -11,7 +11,7 @@
   </parent>
 
   <groupId>edu.eci.arsw</groupId>
-  <artifactId>SpringBoot_REST_API_Blueprints</artifactId>
+  <artifactId>SpringBoot_REST_API_Tickets</artifactId>
   <version>1.0.0</version>
   <name>SpringBoot_REST_API_Blueprints</name>
   <description>ARSW Lab #4 Blueprints — Java 21 / Spring Boot 3.3.x, 1:1 endpoints behavior</description>

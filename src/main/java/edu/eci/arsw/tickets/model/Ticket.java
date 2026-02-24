@@ -19,6 +19,10 @@ public class Ticket {
         return id;
     }
 
+    public TicketState getState() {
+        return state;
+    }
+
     public void setState(TicketState ticketState) {
         this.state = ticketState;
     }
