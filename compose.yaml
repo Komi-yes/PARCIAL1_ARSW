@@ -13,37 +13,33 @@ services:
       context: .
     ports:
       - 8080:8080
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://db:5432/TicketsDB
+      - SPRING_DATASOURCE_USERNAME=tickets
+      - SPRING_DATASOURCE_PASSWORD=Password123
+      - SPRING_PROFILES_ACTIVE=${SPRING_PROFILES_ACTIVE:-Identity}
+  db:
+    image: postgres:18
+    restart: always
+    volumes:
+      - db-data:/var/lib/postgresql
+    environment:
+      - POSTGRES_DB=TicketsDB
+      - POSTGRES_USER=tickets
+      - POSTGRES_PASSWORD=Password123
+    secrets:
+      - db-password
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U tickets -d TicketsDB" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
 
-# The commented out section below is an example of how to define a PostgreSQL
-# database that your application can use. `depends_on` tells Docker Compose to
-# start the database before your application. The `db-data` volume persists the
-# database data between container restarts. The `db-password` secret is used
-# to set the database password. You must create `db/password.txt` and add
-# a password of your choosing to it before running `docker-compose up`.
-#     depends_on:
-#       db:
-#         condition: service_healthy
-#   db:
-#     image: postgres
-#     restart: always
-#     user: postgres
-#     secrets:
-#       - db-password
-#     volumes:
-#       - db-data:/var/lib/postgresql/data
-#     environment:
-#       - POSTGRES_DB=example
-#       - POSTGRES_PASSWORD_FILE=/run/secrets/db-password
-#     expose:
-#       - 5432
-#     healthcheck:
-#       test: [ "CMD", "pg_isready" ]
-#       interval: 10s
-#       timeout: 5s
-#       retries: 5
-# volumes:
-#   db-data:
-# secrets:
-#   db-password:
-#     file: db/password.txt
-
+volumes:
+   db-data:
+secrets:
+   db-password:
+     file: db/password.txt
