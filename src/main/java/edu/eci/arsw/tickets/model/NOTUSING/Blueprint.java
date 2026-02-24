@@ -1,4 +1,4 @@
-package edu.eci.arsw.blueprints.model.NOTUSING;
+package edu.eci.arsw.tickets.model.NOTUSING;
 
 
 import jakarta.persistence.*;

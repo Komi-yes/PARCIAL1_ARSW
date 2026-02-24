@@ -1,11 +1,11 @@
-package edu.eci.arsw.blueprints;
+package edu.eci.arsw.tickets;
 
-import edu.eci.arsw.blueprints.filters.BlueprintsFilter;
-import edu.eci.arsw.blueprints.model.Blueprint;
-import edu.eci.arsw.blueprints.persistence.impl.BlueprintNotFoundException;
-import edu.eci.arsw.blueprints.persistence.impl.BlueprintPersistence;
-import edu.eci.arsw.blueprints.persistence.impl.BlueprintPersistenceException;
-import edu.eci.arsw.blueprints.services.BlueprintsServices;
+import edu.eci.arsw.tickets.filters.BlueprintsFilter;
+import edu.eci.arsw.tickets.model.Blueprint;
+import edu.eci.arsw.tickets.persistence.impl.BlueprintNotFoundException;
+import edu.eci.arsw.tickets.persistence.impl.BlueprintPersistence;
+import edu.eci.arsw.tickets.persistence.impl.BlueprintPersistenceException;
+import edu.eci.arsw.tickets.services.BlueprintsServices;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;

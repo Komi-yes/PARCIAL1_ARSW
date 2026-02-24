@@ -1,4 +1,4 @@
-package edu.eci.arsw.blueprints.model;
+package edu.eci.arsw.tickets.model;
 
 public enum TicketState {
     CREATED,

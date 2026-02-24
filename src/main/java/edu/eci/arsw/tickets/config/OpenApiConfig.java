@@ -1,4 +1,4 @@
-package edu.eci.arsw.blueprints.config;
+package edu.eci.arsw.tickets.config;
 
 import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.info.Info;
@@ -11,8 +11,8 @@ public class OpenApiConfig {
     @Bean
     public OpenAPI api() {
         return new OpenAPI().info(new Info()
-                .title("ARSW Blueprints API")
+                .title("ARSW Tickets API")
                 .version("v1")
-                .description("Blueprints Laboratory (Java 21 / Spring Boot 3.3.x)"));
+                .description("Tickets exam (Java 21 / Spring Boot 3.3.x)"));
     }
 }

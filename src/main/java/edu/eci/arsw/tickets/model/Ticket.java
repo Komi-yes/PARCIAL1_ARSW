@@ -1,4 +1,4 @@
-package edu.eci.arsw.blueprints.model;
+package edu.eci.arsw.tickets.model;
 
 import jakarta.persistence.*;
 
@@ -17,5 +17,9 @@ public class Ticket {
 
     public long getId() {
         return id;
+    }
+
+    public void setState(TicketState ticketState) {
+        this.state = ticketState;
     }
 }

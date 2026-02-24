@@ -1,7 +1,7 @@
-package edu.eci.arsw.blueprints;
+package edu.eci.arsw.tickets;
 
-import edu.eci.arsw.blueprints.model.Blueprint;
-import edu.eci.arsw.blueprints.model.Point;
+import edu.eci.arsw.tickets.model.Blueprint;
+import edu.eci.arsw.tickets.model.Point;
 
 import java.util.List;
 import java.util.Set;

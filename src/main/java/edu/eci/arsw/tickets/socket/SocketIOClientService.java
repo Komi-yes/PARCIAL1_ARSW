@@ -1,6 +1,6 @@
-package edu.eci.arsw.blueprints.socket;
+package edu.eci.arsw.tickets.socket;
 
-import edu.eci.arsw.blueprints.model.NOTUSING.Point;
+import edu.eci.arsw.tickets.model.NOTUSING.Point;
 import io.socket.client.IO;
 import io.socket.client.Socket;
 import io.socket.emitter.Emitter;
@@ -55,15 +55,12 @@ public class SocketIOClientService {
     }
 
 
-    public void sendDrawEvent(String author, String name, Point point) {
+    public void sendDrawEvent() {
         if (socket != null && socket.connected()) {
-            String room = "blueprints." + author + "." + name;
+            String room = "HOSPITAL";
             try {
                 JSONObject eventData = new JSONObject();
                 eventData.put("room", room);
-                eventData.put("point", point.toJSONObject());
-                eventData.put("author", author);
-                eventData.put("name", name);
                 eventData.put("fromSpring", true);
 
                 socket.emit("draw-event", eventData);

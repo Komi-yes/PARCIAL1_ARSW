@@ -1,4 +1,4 @@
-package edu.eci.arsw.blueprints.config;
+package edu.eci.arsw.tickets.config;
 
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
