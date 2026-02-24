@@ -1,10 +1,10 @@
 package edu.eci.arsw.blueprints.services;
 
-import edu.eci.arsw.blueprints.filters.BlueprintsFilter;
-import edu.eci.arsw.blueprints.model.Blueprint;
-import edu.eci.arsw.blueprints.persistence.impl.HospitalNotFoundException;
-import edu.eci.arsw.blueprints.persistence.impl.HospitalPersistence;
-import edu.eci.arsw.blueprints.persistence.impl.HospitalPersistenceException;
+import edu.eci.arsw.blueprints.model.NOTUSING.Blueprint;
+import edu.eci.arsw.blueprints.model.Ticket;
+import edu.eci.arsw.blueprints.persistence.HospitalNotFoundException;
+import edu.eci.arsw.blueprints.persistence.HospitalPersistence;
+import edu.eci.arsw.blueprints.persistence.HospitalPersistenceException;
 import org.springframework.stereotype.Service;
 
 import java.util.Set;
@@ -13,30 +13,24 @@ import java.util.Set;
 public class HospitalServices {
 
     private final HospitalPersistence persistence;
-    private final BlueprintsFilter filter;
 
-    public HospitalServices(HospitalPersistence persistence, BlueprintsFilter filter) {
+    public HospitalServices(HospitalPersistence persistence) {
         this.persistence = persistence;
-        this.filter = filter;
     }
 
-    public void addNewBlueprint(Blueprint bp) throws HospitalPersistenceException {
-        persistence.saveTicket(bp);
+    public void addNewTicket(Ticket ticket) throws HospitalPersistenceException {
+        persistence.saveTicket(ticket);
     }
 
-    public Set<Blueprint> getAllBlueprints() {
-        return persistence.getAllBlueprints();
+    public Set<Ticket> getAllTickets() {
+        return persistence.getAllTickets();
     }
 
-    public Set<Blueprint> getBlueprintsByAuthor(String author) throws HospitalNotFoundException {
-        return persistence.getTicketById(author);
+    public Ticket getTicketById(long id) throws HospitalNotFoundException {
+        return persistence.getTicketById(id);
     }
 
-    public Blueprint getBlueprint(String author, String name) throws HospitalNotFoundException {
-        return filter.apply(persistence.getCalledTicket());
-    }
-
-    public void addPoint(String author, String name, int x, int y) throws HospitalNotFoundException {
-        persistence.CallTicket(author);
+    public Ticket getCalledTicket() throws HospitalNotFoundException {
+        return persistence.getCalledTicket();
     }
 }

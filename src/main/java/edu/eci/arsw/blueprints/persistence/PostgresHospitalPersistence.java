@@ -1,13 +1,16 @@
-package edu.eci.arsw.blueprints.persistence.impl;
+package edu.eci.arsw.blueprints.persistence;
 
-import edu.eci.arsw.blueprints.model.Blueprint;
-import edu.eci.arsw.blueprints.model.Point;
+import edu.eci.arsw.blueprints.model.NOTUSING.Blueprint;
+import edu.eci.arsw.blueprints.model.NOTUSING.Point;
+import edu.eci.arsw.blueprints.model.Ticket;
 import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Repository;
 
 import java.util.HashSet;
-import java.util.List;
+import java.util.Optional;
 import java.util.Set;
+
+import static edu.eci.arsw.blueprints.model.TicketState.CALLED;
 
 @Repository
 @Primary
@@ -20,36 +23,36 @@ public class PostgresHospitalPersistence implements HospitalPersistence {
     }
 
     @Override
-    public void saveTicket(Blueprint bp) throws HospitalPersistenceException {
-        if (repo.findByAuthorAndName(bp.getAuthor(), bp.getName()).isPresent()) {
+    public void saveTicket(Ticket ticket) throws HospitalPersistenceException {
+        if (repo.findById(ticket.getId()).isPresent()) {
             throw new HospitalPersistenceException("Blueprint already exists: "
-                    + bp.getAuthor() + "/" + bp.getName());
+                    + ticket.getId());
         }
-        repo.save(bp);
+        repo.save(ticket);
     }
 
     @Override
-    public Blueprint getCalledTicket() throws HospitalNotFoundException {
-        return repo.findByAuthorAndName(author, name)
+    public Ticket getCalledTicket() throws HospitalNotFoundException {
+        return repo.findCalledTicket(CALLED)
                 .orElseThrow(() -> new HospitalNotFoundException(
-                        "Blueprint not found: %s/%s".formatted(author, name)));
+                        "Ticket not found: %s".formatted(CALLED)));
     }
 
     @Override
-    public Set<Blueprint> getTicketById(String id) throws HospitalNotFoundException {
-        List<Blueprint> list = repo.findByAuthor(id);
+    public Ticket getTicketById(long id) throws HospitalNotFoundException {
+        Optional<Ticket> list = repo.findById(id);
         if (list.isEmpty()) throw new HospitalNotFoundException(
                 "No blueprints for author: " + id);
         return new HashSet<>(list);
     }
 
     @Override
-    public Set<Blueprint> getAllBlueprints() {
+    public Set<Ticket> getAllTickets() {
         return new HashSet<>(repo.findAll());
     }
 
     @Override
-    public void CallTicket(String id) throws HospitalNotFoundException {
+    public void CallTicket() throws HospitalNotFoundException {
         Blueprint bp = getCalledTicket();
         bp.addPoint(new Point(x, y));
         repo.save(bp);

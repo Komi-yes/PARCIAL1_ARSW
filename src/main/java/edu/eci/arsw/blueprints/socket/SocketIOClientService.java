@@ -1,6 +1,6 @@
 package edu.eci.arsw.blueprints.socket;
 
-import edu.eci.arsw.blueprints.model.Point;
+import edu.eci.arsw.blueprints.model.NOTUSING.Point;
 import io.socket.client.IO;
 import io.socket.client.Socket;
 import io.socket.emitter.Emitter;

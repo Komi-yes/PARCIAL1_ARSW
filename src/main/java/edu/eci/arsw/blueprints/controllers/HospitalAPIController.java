@@ -1,9 +1,10 @@
 package edu.eci.arsw.blueprints.controllers;
 
-import edu.eci.arsw.blueprints.model.Blueprint;
-import edu.eci.arsw.blueprints.model.Point;
-import edu.eci.arsw.blueprints.persistence.impl.HospitalNotFoundException;
-import edu.eci.arsw.blueprints.persistence.impl.HospitalPersistenceException;
+import edu.eci.arsw.blueprints.model.NOTUSING.Blueprint;
+import edu.eci.arsw.blueprints.model.NOTUSING.Point;
+import edu.eci.arsw.blueprints.model.Ticket;
+import edu.eci.arsw.blueprints.persistence.HospitalNotFoundException;
+import edu.eci.arsw.blueprints.persistence.HospitalPersistenceException;
 import edu.eci.arsw.blueprints.services.HospitalServices;
 import edu.eci.arsw.blueprints.socket.SocketIOClientService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -36,8 +37,8 @@ public class HospitalAPIController {
     }
     // GET /api/v1/blueprints
     @Operation(
-            summary = "Obtener todos los blueprints",
-            description = "Retorna todos los blueprints almacenados."
+            summary = "Obtener todos los tickets",
+            description = "Retorna todos los tickets almacenados."
     )
     @ApiResponses({
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", description = "Consulta exitosa",
@@ -47,10 +48,10 @@ public class HospitalAPIController {
                     content = @Content)
     })
     @GetMapping
-    public ResponseEntity<ApiResponse<Set<Blueprint>>> getAll() {
-        Set<Blueprint> blueprints = services.getAllBlueprints();
+    public ResponseEntity<ApiResponse<Set<?>>> getAll() {
+        Set<Ticket> tickets = services.getAllTickets();
         return ResponseEntity.ok(
-                new ApiResponse<>(200, "execute ok", blueprints)
+                new ApiResponse<>(200, "execute ok", tickets)
         );
     }
     // GET /api/v1/blueprints/{author}
@@ -69,11 +70,11 @@ public class HospitalAPIController {
                     content = @Content)
     })
     @GetMapping("/{author}")
-    public ResponseEntity<ApiResponse<?>> byAuthor(@PathVariable String author) {
+    public ResponseEntity<ApiResponse<?>> byId(@PathVariable String id) {
         try {
-            Set<Blueprint> blueprints = services.getBlueprintsByAuthor(author);
+            Ticket ticket = services.getTicketById(id);
             return ResponseEntity.ok(
-                    new ApiResponse<>(200, "execute ok", blueprints)
+                    new ApiResponse<>(200, "execute ok", ticket)
             );
         } catch (HospitalNotFoundException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(
@@ -96,14 +97,12 @@ public class HospitalAPIController {
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "500", description = "Error interno del servidor",
                     content = @Content)
     })
-    @GetMapping("/{author}/{bpname}")
-    public ResponseEntity<ApiResponse<?>> byAuthorAndName(
-            @PathVariable String author,
-            @PathVariable String bpname) {
+    @GetMapping("/called")
+    public ResponseEntity<ApiResponse<?>> byAuthorAndName() {
         try {
-            Blueprint bp = services.getBlueprint(author, bpname);
+            Ticket ticket = services.getCalledTicket();
             return ResponseEntity.ok(
-                    new ApiResponse<>(200, "execute ok", bp)
+                    new ApiResponse<>(200, "execute ok", ticket)
             );
         } catch (HospitalNotFoundException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(
@@ -130,50 +129,16 @@ public class HospitalAPIController {
                     content = @Content)
     })
     @PostMapping
-    public ResponseEntity<ApiResponse<?>> add(@Valid @RequestBody NewBlueprintRequest req) {
+    public ResponseEntity<ApiResponse<?>> add() {
         try {
-            Blueprint bp = new Blueprint(req.author(), req.name(), req.points());
-            services.addNewBlueprint(bp);
+            Ticket ticket = new Ticket();
+            services.addNewTicket(ticket);
             return ResponseEntity.status(HttpStatus.CREATED).body(
                     new ApiResponse<>(201, "Blueprint created successfully", null)
             );
         } catch (HospitalPersistenceException e) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).body(
                     new ApiResponse<>(403, e.getMessage(), null)
-            );
-        }
-    }
-    // PUT /api/v1/blueprints/{author}/{bpname}/points
-    @Operation(
-            summary = "Agregar punto a un blueprint",
-            description = "Agrega un punto (x,y) a un blueprint existente."
-    )
-    @ApiResponses({
-            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "202", description = "Punto agregado exitosamente",
-                    content = @Content(mediaType = "application/json",
-                            schema = @Schema(implementation = ApiResponse.class))),
-            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "404", description = "Blueprint no encontrado",
-                    content = @Content(mediaType = "application/json",
-                            schema = @Schema(implementation = ApiResponse.class))),
-            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "500", description = "Error interno del servidor",
-                    content = @Content)
-    })
-    @PutMapping("/{author}/{bpname}/points")
-    public ResponseEntity<ApiResponse<?>> addPoint(
-            @PathVariable String author,
-            @PathVariable String bpname,
-            @RequestBody Point p) {
-        try {
-            services.addPoint(author, bpname, p.x(), p.y());
-
-            socketIOClient.sendDrawEvent(author, bpname, p);
-
-            return ResponseEntity.status(HttpStatus.ACCEPTED).body(
-                    new ApiResponse<>(202, "Point added successfully", null)
-            );
-        } catch (HospitalNotFoundException e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(
-                    new ApiResponse<>(404, e.getMessage(), null)
             );
         }
     }
@@ -190,10 +155,4 @@ public class HospitalAPIController {
         );
     }
     public record ApiResponse<T>(int code, String message, T data) {}
-
-    public record NewBlueprintRequest(
-            @NotBlank(message = "author must not be blank") String author,
-            @NotBlank(message = "name must not be blank") String name,
-            @NotEmpty(message = "points must not be empty") @Valid List<Point> points
-    ) {}
 }

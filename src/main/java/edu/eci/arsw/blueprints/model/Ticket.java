@@ -10,4 +10,12 @@ public class Ticket {
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
     private Long id;
     private TicketState state;
+
+    public Ticket() {
+        this.state = TicketState.CREATED;
+    }
+
+    public long getId() {
+        return id;
+    }
 }

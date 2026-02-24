@@ -1,4 +1,4 @@
-package edu.eci.arsw.blueprints.model;
+package edu.eci.arsw.blueprints.model.NOTUSING;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
