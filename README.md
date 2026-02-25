@@ -95,11 +95,10 @@ Para la documentación, se usaron las anotaciones `@Operation` y `@ApiResponse` 
 
 
 ### Swagger-ui
+[Recording 2026-02-24 190330.mp4](Images/ReadMe/Recording%202026-02-24%20190330.mp4)
 
-[Video evidencia Swagger blueprint.mp4](Images/ReadMe/Video%20evidencia%20Swagger%20blueprint.mp4)
+### front
 
-### Docker
-
-![img_10.png](Images/ReadMe/img_10.png)
+[Recording 2026-02-24 190925.mp4](Images/ReadMe/Recording%202026-02-24%20190925.mp4)
 
 ---
