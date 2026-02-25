@@ -3,8 +3,8 @@ import { Client } from '@stomp/stompjs'
 
 export function createStompClient(baseUrl) {
   const client = new Client({
-    brokerURL: `${baseUrl.replace(/\/$/,'')}/ws-blueprints`,
-    // webSocketFactory: () => new SockJS(`${baseUrl}/ws-blueprints`),
+    brokerURL: `${baseUrl.replace(/\/$/,'')}/ws-tickets`,
+    // webSocketFactory: () => new SockJS(`${baseUrl}/ws-tickets`),
     reconnectDelay: 1000,
     heartbeatIncoming: 10000,
     heartbeatOutgoing: 10000,
@@ -13,8 +13,8 @@ export function createStompClient(baseUrl) {
   return client
 }
 
-export function subscribeBlueprint(client, author, name, onMsg) {
-  return client.subscribe(`/topic/blueprints.${author}.${name}`, (m) => {
+export function subscribeToTickets(client, onMsg) {
+  return client.subscribe('/topic/tickets', (m) => {
     onMsg(JSON.parse(m.body))
   })
 }
