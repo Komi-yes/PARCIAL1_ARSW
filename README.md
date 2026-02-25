@@ -24,13 +24,20 @@ docker-compose up --build
 
 > Si deseas activar filtros de puntos (reducción de redundancia, *undersampling*, etc.), implementa nuevas clases que extiendan `BlueprintsFilter` y agrega a la restriccion de perfil de IdentityFilter el nombre del filtro que vayas a usar  crea el perfil en el nuevo filtro
 
+Para abrir el fornt de proyecto toca correr los siguientes comandos en otra terminal: 
+
+```bash
+npm install
+npm run dev
+```
+> Si el primer comando no funciona corre con npm install --force
 ### Acceso en navegador:
 
 *   **Swagger UI:** <http://localhost:8080/swagger-ui.html>
 *   **OpenAPI JSON:** <http://localhost:8080/v3/api-docs>
-
+*   **Front:** <http://localhost:8080/v3/api-docs>
 ***
-
+  
 ## ╰┈➤ |Estructura de carpetas (arquitectura)|
 
     src/main/java/edu/eci/arsw/tickets
@@ -48,7 +55,7 @@ docker-compose up --build
 
 ## ╰┈➤ |Parcial|
 
-### 3. Buenas prácticas de API REST
+### Buenas prácticas de API REST
 - Cambia el path base de los controladores a `/api/v1/blueprints`.
 - Usa **códigos HTTP** correctos:
     - `200 OK` (consultas exitosas).
@@ -74,7 +81,7 @@ Para la implementación de los códigos y de la respuesta uniforme que se nos pl
 
 ***
 
-### 4. OpenAPI / Swagger
+### OpenAPI / Swagger
 
 *   Configuración de `springdoc-openapi`.
 *   Documentación accesible en `/swagger-ui.html`.

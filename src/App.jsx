@@ -15,7 +15,6 @@ export default function App() {
     const stompRef = useRef(null)
     const unsubRef = useRef(null)
 
-    // Fetch all tickets
     const fetchTickets = async () => {
         try {
             const base = tech === 'stomp' ? API_BASE : IO_BASE
@@ -29,7 +28,6 @@ export default function App() {
         }
     }
 
-    // Fetch called ticket
     const fetchCalledTicket = async () => {
         try {
             const base = tech === 'stomp' ? API_BASE : IO_BASE
@@ -43,7 +41,6 @@ export default function App() {
         }
     }
 
-    // Create new ticket
     const createTicket = async () => {
         setLoading(true)
         try {
@@ -52,7 +49,6 @@ export default function App() {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' }
             })
-            // Refresh data after creating
             await fetchTickets()
             await fetchCalledTicket()
         } catch (error) {
@@ -62,7 +58,6 @@ export default function App() {
         }
     }
 
-    // Call next ticket
     const callNextTicket = async () => {
         setLoading(true)
         try {
@@ -80,7 +75,6 @@ export default function App() {
         }
     }
 
-    // Load initial data only once when component mounts
     useEffect(() => {
         fetchTickets()
         fetchCalledTicket()
@@ -106,7 +100,6 @@ export default function App() {
 
             s.on('ticket-update', (upd) => {
                 console.log('Ticket update received:', upd)
-                // No hacer fetch automático para evitar ciclo infinito
             })
 
             s.on('draw-error', (err) => {
@@ -120,7 +113,6 @@ export default function App() {
                 console.log('STOMP connected')
                 unsubRef.current = subscribeToTickets(client, (upd) => {
                     console.log('STOMP ticket update received:', upd)
-                    // No hacer fetch automático para evitar ciclo infinito
                 })
             }
 
